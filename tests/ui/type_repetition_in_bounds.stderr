@@ -11,5 +11,14 @@ LL | #[deny(clippy::type_repetition_in_bounds)]
    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    = help: consider combining the bounds: `T: Copy + Clone`
 
-error: aborting due to previous error
+error: this type has already been used as a bound predicate
+  --> $DIR/type_repetition_in_bounds.rs:29:5
+   |
+LL |     FooBar<B>: Unpin,
+   |     ^^^^^^^^^^^^^^^^
+   |
+   = note: `-D clippy::type-repetition-in-bounds` implied by `-D warnings`
+   = help: consider combining the bounds: `FooBar<B>: Unpin + Unpin`
+
+error: aborting due to 2 previous errors
 

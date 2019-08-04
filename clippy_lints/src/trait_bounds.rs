@@ -3,6 +3,7 @@ use rustc::hir::*;
 use rustc::lint::{LateContext, LateLintPass, LintArray, LintPass};
 use rustc::{declare_tool_lint, impl_lint_pass};
 use rustc_data_structures::fx::FxHashMap;
+use std::hash::Hash;
 
 #[derive(Copy, Clone)]
 pub struct TraitBounds;
@@ -35,15 +36,18 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for TraitBounds {
         if in_macro(gen.span) {
             return;
         }
-        let hash = |ty| -> u64 {
+        let hash = |ty, generics: &HirVec<GenericParam>| -> u64 {
             let mut hasher = SpanlessHash::new(cx, cx.tables);
             hasher.hash_ty(ty);
+            for param in generics {
+                param.name.hash(&mut hasher.s);
+            }
             hasher.finish()
         };
         let mut map = FxHashMap::default();
         for bound in &gen.where_clause.predicates {
             if let WherePredicate::BoundPredicate(ref p) = bound {
-                let h = hash(&p.bounded_ty);
+                let h = hash(&p.bounded_ty, &p.bound_generic_params);
                 if let Some(ref v) = map.insert(h, p.bounds.iter().collect::<Vec<_>>()) {
                     let mut hint_string = format!(
                         "consider combining the bounds: `{}:",

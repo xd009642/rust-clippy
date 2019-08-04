@@ -16,4 +16,18 @@ where
     unimplemented!();
 }
 
+pub struct FooBar<T>(T);
+
+pub struct TwoFooBars<A, B> {
+    a: FooBar<A>,
+    b: FooBar<B>,
+}
+
+impl<A, B> Unpin for TwoFooBars<A, B>
+where
+    FooBar<A>: Unpin,
+    FooBar<B>: Unpin,
+{
+}
+
 fn main() {}

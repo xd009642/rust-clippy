@@ -348,7 +348,7 @@ pub struct SpanlessHash<'a, 'tcx> {
     /// Context used to evaluate constant expressions.
     cx: &'a LateContext<'a, 'tcx>,
     tables: &'a TypeckTables<'tcx>,
-    s: DefaultHasher,
+    pub(crate) s: DefaultHasher,
 }
 
 impl<'a, 'tcx> SpanlessHash<'a, 'tcx> {
