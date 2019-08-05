@@ -348,7 +348,7 @@ pub struct SpanlessHash<'a, 'tcx> {
     /// Context used to evaluate constant expressions.
     cx: &'a LateContext<'a, 'tcx>,
     tables: &'a TypeckTables<'tcx>,
-    pub(crate) s: DefaultHasher,
+    s: DefaultHasher,
 }
 
 impl<'a, 'tcx> SpanlessHash<'a, 'tcx> {
@@ -592,6 +592,10 @@ impl<'a, 'tcx> SpanlessHash<'a, 'tcx> {
                 ParamName::Error => {},
             }
         }
+    }
+
+    pub fn hash_generic_param(&mut self, param: &GenericParam) {
+        param.name.hash(&mut self.s);
     }
 
     pub fn hash_ty(&mut self, ty: &Ty) {

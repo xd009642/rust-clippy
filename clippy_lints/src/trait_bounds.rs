@@ -3,7 +3,6 @@ use rustc::hir::*;
 use rustc::lint::{LateContext, LateLintPass, LintArray, LintPass};
 use rustc::{declare_tool_lint, impl_lint_pass};
 use rustc_data_structures::fx::FxHashMap;
-use std::hash::Hash;
 
 #[derive(Copy, Clone)]
 pub struct TraitBounds;
@@ -40,7 +39,7 @@ impl<'a, 'tcx> LateLintPass<'a, 'tcx> for TraitBounds {
             let mut hasher = SpanlessHash::new(cx, cx.tables);
             hasher.hash_ty(ty);
             for param in generics {
-                param.name.hash(&mut hasher.s);
+                hasher.hash_generic_param(&param);
             }
             hasher.finish()
         };
